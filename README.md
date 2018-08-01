@@ -209,9 +209,9 @@ d3.selectAll("circle").transition()
 
 1. 如果 *value* 为数值, 使用 [interpolateNumber](https://github.com/xswei/d3-interpolate#interpolateNumber).
 2. 如果 *value* 为 [color](https://github.com/xswei/d3-color#color) 或可以被强制转为颜色的字符串, 使用 [interpolateRgb](https://github.com/d3/d3-interpolate#interpolateRgb).
-3. Use [interpolateString](https://github.com/d3/d3-interpolate#interpolateString).
+3. 使用 [interpolateString](https://github.com/d3/d3-interpolate#interpolateString).
 
-To apply a different interpolator, use [*transition*.attrTween](#transition_attrTween).
+如果想使用其他插值器，则使用 [*transition*.attrTween](#transition_attrTween) 方法.
 
 <a name="transition_attrTween" href="#transition_attrTween">#</a> <i>transition</i>.<b>attrTween</b>(<i>name</i>[, <i>factory</i>]) [<>](https://github.com/d3/d3-transition/blob/master/src/transition/attrTween.js "Source")
 
