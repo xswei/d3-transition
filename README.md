@@ -1,8 +1,8 @@
 # d3-transition
 
-A transition is a [selection](https://github.com/d3/d3-selection)-like interface for animating changes to the DOM. Instead of applying changes instantaneously, transitions smoothly interpolate the DOM from its current state to the desired target state over a given duration.
+`transition` 是一个类 [selection](https://github.com/xswei/d3-selection) 的接口，用来对 `DOM` 进行动画修改。这种修改不是立即修改，而是在规定的事件内平滑过渡到目标状态。
 
-To apply a transition, select elements, call [*selection*.transition](#selection_transition), and then make the desired changes. For example:
+应用过渡，首先要选中元素，然后调用 [*selection*.transition](#selection_transition)，并且设置期望的改变，例如:
 
 ```js
 d3.select("body")
@@ -10,13 +10,13 @@ d3.select("body")
     .style("background-color", "red");
 ```
 
-Transitions support most selection methods (such as [*transition*.attr](#transition_attr) and [*transition*.style](#transition_style) in place of [*selection*.attr](https://github.com/d3/d3-selection#selection_attr) and [*selection*.style](https://github.com/d3/d3-selection#selection_style)), but not all methods are supported; for example, you must [append](https://github.com/d3/d3-selection#selection_append) elements or [bind data](https://github.com/d3/d3-selection#joining-data) before a transition starts. A [*transition*.remove](#transition_remove) operator is provided for convenient removal of elements when the transition ends.
+过渡支持大多数选择集的方法(比如 [*transition*.attr](#transition_attr) 和 [*transition*.style](#transition_style) 对应 [*selection*.attr](https://github.com/d3/d3-selection#selection_attr) 和 [*selection*.style](https://github.com/d3/d3-selection#selection_style))，但是并不是所有的方法都支持; 比如必须在对元素过渡之前 [append](https://github.com/d3/d3-selection#selection_append) 元素或者 [bind data](https://github.com/d3/d3-selection#joining-data)。[*transition*.remove](#transition_remove) 操作可以在动画结束时方便的移除元素。
 
-To compute intermediate state, transitions leverage a variety of [built-in interpolators](https://github.com/d3/d3-interpolate). [Colors](https://github.com/d3/d3-interpolate#interpolateRgb), [numbers](https://github.com/d3/d3-interpolate#interpolateNumber), and [transforms](https://github.com/d3/d3-interpolate#interpolateTransform) are automatically detected. [Strings](https://github.com/d3/d3-interpolate#interpolateString) with embedded numbers are also detected, as is common with many styles (such as padding or font sizes) and paths. To specify a custom interpolator, use [*transition*.attrTween](#transition_attrTween), [*transition*.styleTween](#transition_styleTween) or [*transition*.tween](#transition_tween).
+为了计算过渡过程中的状态，过渡集成了大量的 [built-in interpolators](https://github.com/d3/d3-interpolate)。[Colors](https://github.com/d3/d3-interpolate#interpolateRgb), [numbers](https://github.com/d3/d3-interpolate#interpolateNumber), 以及 [transforms](https://github.com/d3/d3-interpolate#interpolateTransform) 会被自动检测。内嵌数字的 [Strings](https://github.com/d3/d3-interpolate#interpolateString) 也会被检测到，可以方便的对许多样式(比如 `padding` 或 `font size`) 以及 `path` 进行过渡。可以使用 [*transition*.attrTween](#transition_attrTween), [*transition*.styleTween](#transition_styleTween) 或 [*transition*.tween](#transition_tween) 指定一个自定义插值器。
 
 ## Installing
 
-If you use NPM, `npm install d3-transition`. Otherwise, download the [latest release](https://github.com/d3/d3-transition/releases/latest). You can also load directly from [d3js.org](https://d3js.org), either as a [standalone library](https://d3js.org/d3-transition.v1.min.js) or as part of [D3 4.0](https://github.com/d3/d3). AMD, CommonJS, and vanilla environments are supported. In vanilla, a `d3` global is exported:
+`NPM` 安装: `npm install d3-transition`. 此外还可以下载 [latest release](https://github.com/d3/d3-transition/releases/latest). 可以直接从 [d3js.org](https://d3js.org) 以 [standalone library](https://d3js.org/d3-transition.v1.min.js) 或作为 [D3 4.0](https://github.com/d3/d3) 的一部分载入. 支持 `AMD`, `CommonJS` 以及基本的标签引入形式，如果使用标签引入形式则会暴露全局 `d3` 变量:
 
 ```html
 <script src="https://d3js.org/d3-color.v1.min.js"></script>
@@ -33,7 +33,7 @@ var transition = d3.transition();
 </script>
 ```
 
-[Try d3-transition in your browser.](https://tonicdev.com/npm/d3-transition)
+[在浏览器中测试 `d3-transition`.](https://tonicdev.com/npm/d3-transition)
 
 ## API Reference
 
@@ -45,13 +45,15 @@ var transition = d3.transition();
 
 ### Selecting Elements
 
+过渡通过 [*selection*.transition](#selection_transition) 派生自 [selections](https://github.com/d3/d3-selection)。你也可以使用 [d3.transition](#transition) 在文档根元素上创建一个过渡。
+
 Transitions are derived from [selections](https://github.com/d3/d3-selection) via [*selection*.transition](#selection_transition). You can also create a transition on the document root element using [d3.transition](#transition).
 
 <a name="selection_transition" href="#selection_transition">#</a> <i>selection</i>.<b>transition</b>([<i>name</i>]) [<>](https://github.com/d3/d3-transition/blob/master/src/selection/transition.js "Source")
 
-Returns a new transition on the given *selection* with the specified *name*. If a *name* is not specified, null is used. The new transition is only exclusive with other transitions of the same name.
+在指定的 *selection* 上返回指定的 *name* 的过渡。如果没有指定 *name* 则会使用 `null`。新的过渡仅仅与其他相同名字的过渡相排斥。
 
-If the *name* is a [transition](#transition) instance, the returned transition has the same id and name as the specified transition. If a transition with the same id already exists on a selected element, the existing transition is returned for that element. Otherwise, the timing of the returned transition is inherited from the existing transition of the same id on the nearest ancestor of each selected element. Thus, this method can be used to synchronize a transition across multiple selections, or to re-select a transition for specific elements and modify its configuration. For example:
+如果 *name* 是一个 [transition](#transition) 实例，则返回的过渡与指定的过渡具有相同的 `id` 和 `name`。如果已经选中的元素上已经存在相同 `id` 和 `name` 的过渡，则返回该元素已有的过渡。否则，返回的过渡的时间会从已经选中的每个选定元素的具有相同 `id` 的最近祖先继承。因此，这个方法可以用来同步多个选择集的过渡，或者重新选择特定元素的过渡并修改其配置。例如:
 
 ```js
 var t = d3.transition()
@@ -65,19 +67,21 @@ d3.selectAll(".orange").transition(t)
     .style("fill", "orange");
 ```
 
+如果指定的 *transition* 没有在已选中元素的祖先元素上找到(比如如果过渡 [already ended](#the-life-of-a-transition))，则默认的时间参数会被使用；但是在未来的版本中，这种情况可能会抛出错误。参考 [#59](https://github.com/d3/d3-transition/issues/59)。
+
 If the specified *transition* is not found on a selected node or its ancestors (such as if the transition [already ended](#the-life-of-a-transition)), the default timing parameters are used; however, in a future release, this will likely be changed to throw an error. See [#59](https://github.com/d3/d3-transition/issues/59).
 
 <a name="selection_interrupt" href="#selection_interrupt">#</a> <i>selection</i>.<b>interrupt</b>([<i>name</i>]) [<>](https://github.com/d3/d3-transition/blob/master/src/selection/interrupt.js "Source")
 
-Interrupts the active transition of the specified *name* on the selected elements, and cancels any pending transitions with the specified *name*, if any. If a name is not specified, null is used.
+中断指定 *name* 的活动的过渡，并且取消指定 *name* 未执行的过渡(如果存在的话)。如果没有指定 *name* 则默认使用 `null`。
 
-Interrupting a transition on an element has no effect on any transitions on any descendant elements. For example, an [axis transition](https://github.com/d3/d3-axis) consists of multiple independent, synchronized transitions on the descendants of the axis [G element](https://www.w3.org/TR/SVG/struct.html#Groups) (the tick lines, the tick labels, the domain path, *etc.*). To interrupt the axis transition, you must therefore interrupt the descendants:
+在元素上中断过渡不会影响其后代的任何过渡。例如，[axis transition](https://github.com/d3/d3-axis) 由多个独立的，同步的过渡组成，这些过渡是对 [G element](https://www.w3.org/TR/SVG/struct.html#Groups) 的后代元素进行过渡(`tick lines`, `tick labels`, `domain path`, *etc.*)。如果要中断 `axis` 的过渡，必须中断其所有后代元素的过渡:
 
 ```js
 selection.selectAll("*").interrupt();
 ```
 
-The [universal selector](https://developer.mozilla.org/en-US/docs/Web/CSS/Universal_selectors), `*`, selects all descendant elements. If you also want to interrupt the G element itself:
+[universal selector(通配选择符)](https://developer.mozilla.org/en-US/docs/Web/CSS/Universal_selectors) `*` 表示选择所有的后代元素. 如果你也要中断 `G` 元素自身的过渡，则:
 
 ```js
 selection.interrupt().selectAll("*").interrupt();
@@ -85,24 +89,24 @@ selection.interrupt().selectAll("*").interrupt();
 
 <a name="interrupt" href="#interrupt">#</a> d3.<b>interrupt</b>(<i>node</i>[, <i>name</i>]) [<>](https://github.com/d3/d3-transition/blob/master/src/interrupt.js "Source")
 
-Interrupts the active transition of the specified *name* on the specified *node*, and cancels any pending transitions with the specified *name*, if any. If a name is not specified, null is used. See also [*selection*.interrupt](#selection_interrupt).
+中断指定 *node* 上指定 *name* 的活跃的过渡，并取消未执行的指定 *name* 的过渡(如果存在的话)。如果没有指定 *name* 则使用 `null`。参考 [*selection*.interrupt](#selection_interrupt)。
 
 <a name="transition" href="#transition">#</a> d3.<b>transition</b>([<i>name</i>]) [<>](https://github.com/d3/d3-transition/blob/master/src/transition/index.js#L29 "Source")
 
-Returns a new transition on the root element, `document.documentElement`, with the specified *name*. If a *name* is not specified, null is used. The new transition is only exclusive with other transitions of the same name. The *name* may also be a [transition](#transition) instance; see [*selection*.transition](#selection_transition). This method is equivalent to:
+在根元素 `document.documentElement` 上返回一个新的过渡，并指定 *name*。如果没有指定 *name*，则使用 `null`。新的过渡只与同名的过渡相排斥。*name* 也可以是一个 [transition](#transition) 实例；参考 [*selection*.transition](#selection_transition)。这个方法等价于:
 
 ```js
 d3.selection()
   .transition(name)
 ```
 
-This function can also be used to test for transitions (`instanceof d3.transition`) or to extend the transition prototype.
+这个函数也可以被用来测试是否是过渡实例 (`instanceof d3.transition`) 或者用来扩展过渡原型链。
 
 <a name="transition_select" href="#transition_select">#</a> <i>transition</i>.<b>select</b>(<i>selector</i>) [<>](https://github.com/d3/d3-transition/blob/master/src/transition/select.js "Source")
 
-For each selected element, selects the first descendant element that matches the specified *selector* string, if any, and returns a transition on the resulting selection. The *selector* may be specified either as a selector string or a function. If a function, it is evaluated for each selected element, in order, being passed the current datum `d` and index `i`, with the `this` context as the current DOM element. The new transition has the same id, name and timing as this transition; however, if a transition with the same id already exists on a selected element, the existing transition is returned for that element.
+对于每一个选中的元素，选中匹配指定 *selector* 的第一个后代元素(如果存在的话) 并在结果选择集上返回一个过渡。*selector* 可以是一个字符串也可以是一个函数。如果是函数的话，会为每一个选中的元素依次调用，并传递当前数据 `d` 以及索引 `i`, 函数内部 `this` 指向当前 `DOM` 元素。新的过渡拥有相同的 `id`, `name` 以及时间；如果选中的元素已经存在相同 `id` 的过渡，则已存的过渡会被返回。
 
-This method is equivalent to deriving the selection for this transition via [*transition*.selection](#transition_selection), creating a subselection via [*selection*.select](https://github.com/d3/d3-selection#selection_select), and then creating a new transition via [*selection*.transition](#selection_transition):
+这个方法等价于通过 [*transition*.selection](#transition_selection) 从过渡中获取选择集，通过 [*selection*.select](https://github.com/d3/d3-selection#selection_select) 创建一个子选择集 然后通过 [*selection*.transition](#selection_transition) 创建一个新的过渡:
 
 ```js
 transition
@@ -113,9 +117,9 @@ transition
 
 <a name="transition_selectAll" href="#transition_selectAll">#</a> <i>transition</i>.<b>selectAll</b>(<i>selector</i>) [<>](https://github.com/d3/d3-transition/blob/master/src/transition/selectAll.js "Source")
 
-For each selected element, selects all descendant elements that match the specified *selector* string, if any, and returns a transition on the resulting selection. The *selector* may be specified either as a selector string or a function. If a function, it is evaluated for each selected element, in order, being passed the current datum `d` and index `i`, with the `this` context as the current DOM element. The new transition has the same id, name and timing as this transition; however, if a transition with the same id already exists on a selected element, the existing transition is returned for that element.
+对于每一个选中的元素，选中匹配指定 *selector* 的所有后代元素(如果存在的话) 并在结果选择集上返回一个过渡。*selector* 可以是一个字符串也可以是一个函数。如果是函数的话，会为每一个选中的元素依次调用，并传递当前数据 `d` 以及索引 `i`, 函数内部 `this` 指向当前 `DOM` 元素。新的过渡拥有相同的 `id`, `name` 以及时间；如果选中的元素已经存在相同 `id` 的过渡，则已存的过渡会被返回。
 
-This method is equivalent to deriving the selection for this transition via [*transition*.selection](#transition_selection), creating a subselection via [*selection*.selectAll](https://github.com/d3/d3-selection#selection_selectAll), and then creating a new transition via [*selection*.transition](#selection_transition):
+这个方法等价于通过 [*transition*.selection](#transition_selection) 从过渡中获取选择集，通过 [*selection*.selectAll](https://github.com/d3/d3-selection#selection_selectAll) 创建一个子选择集 然后通过 [*selection*.transition](#selection_transition) 创建一个新的过渡:
 
 ```js
 transition
@@ -126,9 +130,9 @@ transition
 
 <a name="transition_filter" href="#transition_filter">#</a> <i>transition</i>.<b>filter</b>(<i>filter</i>) [<>](https://github.com/d3/d3-transition/blob/master/src/transition/filter.js "Source")
 
-For each selected element, selects only the elements that match the specified *filter*, and returns a transition on the resulting selection. The *filter* may be specified either as a selector string or a function. If a function, it is evaluated for each selected element, in order, being passed the current datum `d` and index `i`, with the `this` context as the current DOM element. The new transition has the same id, name and timing as this transition; however, if a transition with the same id already exists on a selected element, the existing transition is returned for that element.
+对于每一个选中的元素，选中匹配指定 *filter* 的元素并在结果选择集上返回一个过渡。*filter* 可以是一个字符串也可以是一个函数。如果是函数的话，会为每一个选中的元素依次调用，并传递当前数据 `d` 以及索引 `i`, 函数内部 `this` 指向当前 `DOM` 元素。新的过渡拥有相同的 `id`, `name` 以及时间；如果选中的元素已经存在相同 `id` 的过渡，则已存的过渡会被返回。
 
-This method is equivalent to deriving the selection for this transition via [*transition*.selection](#transition_selection), creating a subselection via [*selection*.filter](https://github.com/d3/d3-selection#selection_filter), and then creating a new transition via [*selection*.transition](#selection_transition):
+这个方法等价于通过 [*transition*.selection](#transition_selection) 从过渡中获取选择集，通过 [*selection*.filter](https://github.com/d3/d3-selection#selection_filter) 创建一个子选择集 然后通过 [*selection*.transition](#selection_transition) 创建一个新的过渡:
 
 ```js
 transition
@@ -139,9 +143,9 @@ transition
 
 <a name="transition_merge" href="#transition_merge">#</a> <i>transition</i>.<b>merge</b>(<i>other</i>) [<>](https://github.com/d3/d3-transition/blob/master/src/transition/merge.js "Source")
 
-Returns a new transition merging this transition with the specified *other* transition, which must have the same id as this transition. The returned transition has the same number of groups, the same parents, the same name and the same id as this transition. Any missing (null) elements in this transition are filled with the corresponding element, if present (not null), from the *other* transition.
+返回一个将当前过渡与指定的 *other* 过渡合并的新的过渡，并且指定的过渡必须与当前过渡有相同的 `id`。返回的过渡与当前过渡有相同的分组数量，相同的父节点以及相同的 `id`。任何当前过渡中缺失(`null`)的元素将会被来自 *other* 过渡中对应的元素填充(如果非空)。
 
-This method is equivalent to deriving the selection for this transition via [*transition*.selection](#transition_selection), merging with the selection likewise derived from the *other* transition via [*selection*.merge](https://github.com/d3/d3-selection#selection_merge), and then creating a new transition via [*selection*.transition](#selection_transition):
+这个方法等价于通过 [*transition*.selection](#transition_selection) 从过渡中获取选择集，通过 [*selection*.merge](https://github.com/d3/d3-selection#selection_merge) 创建一个子选择集然后通过 [*selection*.transition](#selection_transition) 创建一个新的过渡:
 
 ```js
 transition
@@ -152,7 +156,7 @@ transition
 
 <a name="transition_transition" href="#transition_transition">#</a> <i>transition</i>.<b>transition</b>() [<>](https://github.com/d3/d3-transition/blob/master/src/transition/transition.js "Source")
 
-Returns a new transition on the same selected elements as this transition, scheduled to start when this transition ends. The new transition inherits a reference time equal to this transition’s time plus its [delay](#transition_delay) and [duration](#transition_duration). The new transition also inherits this transition’s name, duration, and [easing](#transition_ease). This method can be used to schedule a sequence of chained transitions. For example:
+当前过渡结束时，在相同的选定元素上返回一个新的过渡，这个过渡将在当前过渡结束时开始。新的过渡继承了参考时间，也就是新的过渡的开始时间等于之前过渡的 [delay](#transition_delay) 和 [duration](#transition_duration)] 之和。新的过渡也继承了当前过渡的 `name`, `duration` 以及 [easing](#transition_ease). 这个方法可以用来创建一些列的链式过渡, 例如：
 
 ```js
 d3.selectAll(".apple")
@@ -166,15 +170,15 @@ d3.selectAll(".apple")
     .remove();
 ```
 
-The delay for each transition is relative to its previous transition. Thus, in the above example, apples will stay red for one second before the last transition to brown starts.
+每个过渡的延时都与前序过渡有关。上述例子中，`apples` 将在过渡为 `brown` 之前保持 `1` 秒的 `red`。
 
 <a name="transition_selection" href="#transition_selection">#</a> <i>transition</i>.<b>selection</b>() [<>](https://github.com/d3/d3-transition/blob/master/src/transition/selection.js "Source")
 
-Returns the [selection](https://github.com/d3/d3-selection#selection) corresponding to this transition.
+返回当前过渡对应的 [selection](https://github.com/xswei/d3-selection#selection).
 
 <a name="active" href="#active">#</a> d3.<b>active</b>(<i>node</i>[, <i>name</i>]) [<>](https://github.com/d3/d3-transition/blob/master/src/active.js "Source")
 
-Returns the active transition on the specified *node* with the specified *name*, if any. If no *name* is specified, null is used. Returns null if there is no such active transition on the specified node. This method is useful for creating chained transitions. For example, to initiate disco mode:
+返回指定 *node* 上指定 *name* 的活动的过渡(如果存在的话)。如果没有指定 *name* 则使用 `null`。如果指定的 *node* 上没有对应的过渡则返回 `null`。这个方法在创建循环过渡时很有用，比如:
 
 ```js
 d3.selectAll("circle").transition()
@@ -191,20 +195,20 @@ d3.selectAll("circle").transition()
       });
 ```
 
-See [chained transitions](http://bl.ocks.org/mbostock/70d5541b547cc222aa02) for an example.
+参考 [chained transitions](http://bl.ocks.org/mbostock/70d5541b547cc222aa02) 获取更多例子.
 
 ### Modifying Elements
 
-After selecting elements and creating a transition with [*selection*.transition](#selection_transition), use the transition’s transformation methods to affect document content.
+在选中元素并使用 [*selection*.transition](#selection_transition) 创建过渡之后，使用过渡的变换方法来影响文档的内容。
 
 <a name="transition_attr" href="#transition_attr">#</a> <i>transition</i>.<b>attr</b>(<i>name</i>, <i>value</i>) [<>](https://github.com/d3/d3-transition/blob/master/src/transition/attr.js "Source")
 
-For each selected element, assigns the [attribute tween](#transition_attrTween) for the attribute with the specified *name* to the specified target *value*. The starting value of the tween is the attribute’s value when the transition starts. The target *value* may be specified either as a constant or a function. If a function, it is immediately evaluated for each selected element, in order, being passed the current datum `d` and index `i`, with the `this` context as the current DOM element.
+对于每个选中的元素，将为指定的属性 *name* 分配 [attribute tween(属性补间)](#transition_attrTween) 值。补间的初始值为过渡开始时的属性值，目标值可以通过常量和函数指定。如果是函数的话，会立即为每个选中的元素调用，并传递当前的数据 `d` 以及索引 `i`, 函数内部 `this` 指向当前 `DOM` 元素。
 
-If the target value is null, the attribute is removed when the transition starts. Otherwise, an interpolator is chosen based on the type of the target value, using the following algorithm:
+如果目标值为 `null` 则当过渡开始时此属性会被移除。否则会根据目标值的类型依据以下算法选择恰当的插值器:
 
-1. If *value* is a number, use [interpolateNumber](https://github.com/d3/d3-interpolate#interpolateNumber).
-2. If *value* is a [color](https://github.com/d3/d3-color#color) or a string coercible to a color, use [interpolateRgb](https://github.com/d3/d3-interpolate#interpolateRgb).
+1. 如果 *value* 为数值, 使用 [interpolateNumber](https://github.com/xswei/d3-interpolate#interpolateNumber).
+2. 如果 *value* 为 [color](https://github.com/xswei/d3-color#color) 或可以被强制转为颜色的字符串, 使用 [interpolateRgb](https://github.com/d3/d3-interpolate#interpolateRgb).
 3. Use [interpolateString](https://github.com/d3/d3-interpolate#interpolateString).
 
 To apply a different interpolator, use [*transition*.attrTween](#transition_attrTween).
