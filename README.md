@@ -211,7 +211,7 @@ d3.selectAll("circle").transition()
 
 <a name="transition_attrTween" href="#transition_attrTween">#</a> <i>transition</i>.<b>attrTween</b>(<i>name</i>[, <i>factory</i>]) [<源码>](https://github.com/d3/d3-transition/blob/master/src/transition/attrTween.js "Source")
 
-如果指定了 *factory* 并且不为 `null`, 则将指定 *name* 的属性 [tween](#transition_tween) 设置为指定的插值器 *factory*。*factory* 是一个返回 [interpolator](https://github.com/d3/d3-interpolate) 的函数; 当过渡开始时，*factory* 会为每个选中的元素进行调用，并依次传递当前元素绑定的数据 `d` 以及索引 `i`, 函数内部 `this` 指向当前 `DOM` 元素。返回的插值器会在过渡过程中的每一帧进行调用，并依次传入 [eased(缓动)](#transition_ease) 时间 *t*, 通常情况下在 [0, 1] 范围内。最后插值器返回的值将会被用来设置为当前属性值。差孩子气必须返回字符串。(在过渡开始时移除属性使用[*transition*.attr](#transition_attr); 在过渡结束时移除属性使用 [*transition*.on](#transition_on) 来监听 *end* 事件.)
+如果指定了 *factory* 并且不为 `null`, 则将指定 *name* 的属性 [tween](#transition_tween) 设置为指定的插值器 *factory*。*factory* 是一个返回 [interpolator](https://github.com/d3/d3-interpolate) 的函数; 当过渡开始时，*factory* 会为每个选中的元素进行调用，并依次传递当前元素绑定的数据 `d` 以及索引 `i`, 函数内部 `this` 指向当前 `DOM` 元素。返回的插值器会在过渡过程中的每一帧进行调用，并依次传入 [eased(缓动)](#transition_ease) 时间 *t*, 通常情况下在 [0, 1] 范围内。最后插值器返回的值将会被用来设置为当前属性值。插值器必须返回字符串。(在过渡开始时移除属性使用[*transition*.attr](#transition_attr); 在过渡结束时移除属性使用 [*transition*.on](#transition_on) 来监听 *end* 事件.)
 
 如果指定的 *factory* 为 `null`, 则表示移除之前改属性名对应的属性补间(如果存在的话)。如果 *factory* 没有指定则返回当前指定 *name* 的插值器工厂函数，如果不存在则返回 `undefined`。
 
